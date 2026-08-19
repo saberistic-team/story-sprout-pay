@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PurseReturnRouteImport } from './routes/purse.return'
 import { Route as StoryIndexRouteImport } from './routes/story.index'
 import { Route as StoryNodeIdRouteImport } from './routes/story.$nodeId'
@@ -24,6 +25,11 @@ const IndexRoute = IndexRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PurseReturnRoute = PurseReturnRouteImport.update({
@@ -51,6 +57,7 @@ const ApiPublicPaymentsWebhookRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/profile': typeof ProfileRoute
   '/purse/return': typeof PurseReturnRoute
   '/story/$nodeId': typeof StoryNodeIdRoute
   '/story/': typeof StoryIndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/profile': typeof ProfileRoute
   '/purse/return': typeof PurseReturnRoute
   '/story/$nodeId': typeof StoryNodeIdRoute
   '/story': typeof StoryIndexRoute
@@ -68,6 +76,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/profile': typeof ProfileRoute
   '/purse/return': typeof PurseReturnRoute
   '/story/$nodeId': typeof StoryNodeIdRoute
   '/story/': typeof StoryIndexRoute
@@ -78,6 +87,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/profile'
     | '/purse/return'
     | '/story/$nodeId'
     | '/story/'
@@ -86,6 +96,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/profile'
     | '/purse/return'
     | '/story/$nodeId'
     | '/story'
@@ -94,6 +105,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/auth'
+    | '/profile'
     | '/purse/return'
     | '/story/$nodeId'
     | '/story/'
@@ -103,6 +115,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
+  ProfileRoute: typeof ProfileRoute
   PurseReturnRoute: typeof PurseReturnRoute
   StoryNodeIdRoute: typeof StoryNodeIdRoute
   StoryIndexRoute: typeof StoryIndexRoute
@@ -123,6 +136,13 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/purse/return': {
@@ -159,6 +179,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
+  ProfileRoute: ProfileRoute,
   PurseReturnRoute: PurseReturnRoute,
   StoryNodeIdRoute: StoryNodeIdRoute,
   StoryIndexRoute: StoryIndexRoute,
