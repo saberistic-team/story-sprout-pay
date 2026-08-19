@@ -355,6 +355,54 @@ export type Database = {
           },
         ]
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          kind: string
+          memo: string | null
+          reference: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          kind: string
+          memo?: string | null
+          reference?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          kind?: string
+          memo?: string | null
+          reference?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      wallets: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -362,6 +410,15 @@ export type Database = {
     Functions: {
       config_value: {
         Args: { p_default: number; p_key: string }
+        Returns: number
+      }
+      credit_wallet: {
+        Args: {
+          p_amount: number
+          p_memo: string
+          p_reference: string
+          p_user_id: string
+        }
         Returns: number
       }
       fork_price: { Args: { p_subtree_size: number }; Returns: number }
