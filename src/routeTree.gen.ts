@@ -10,11 +10,35 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as PurseReturnRouteImport } from './routes/purse.return'
+import { Route as StoryIndexRouteImport } from './routes/story.index'
+import { Route as StoryNodeIdRouteImport } from './routes/story.$nodeId'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PurseReturnRoute = PurseReturnRouteImport.update({
+  id: '/purse/return',
+  path: '/purse/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoryIndexRoute = StoryIndexRouteImport.update({
+  id: '/story/',
+  path: '/story/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoryNodeIdRoute = StoryNodeIdRouteImport.update({
+  id: '/story/$nodeId',
+  path: '/story/$nodeId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicPaymentsWebhookRoute =
@@ -26,27 +50,62 @@ const ApiPublicPaymentsWebhookRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/purse/return': typeof PurseReturnRoute
+  '/story/$nodeId': typeof StoryNodeIdRoute
+  '/story/': typeof StoryIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/purse/return': typeof PurseReturnRoute
+  '/story/$nodeId': typeof StoryNodeIdRoute
+  '/story': typeof StoryIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/purse/return': typeof PurseReturnRoute
+  '/story/$nodeId': typeof StoryNodeIdRoute
+  '/story/': typeof StoryIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/api/public/payments/webhook'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/purse/return'
+    | '/story/$nodeId'
+    | '/story/'
+    | '/api/public/payments/webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/api/public/payments/webhook'
-  id: '__root__' | '/' | '/api/public/payments/webhook'
+  to:
+    | '/'
+    | '/auth'
+    | '/purse/return'
+    | '/story/$nodeId'
+    | '/story'
+    | '/api/public/payments/webhook'
+  id:
+    | '__root__'
+    | '/'
+    | '/auth'
+    | '/purse/return'
+    | '/story/$nodeId'
+    | '/story/'
+    | '/api/public/payments/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthRoute: typeof AuthRoute
+  PurseReturnRoute: typeof PurseReturnRoute
+  StoryNodeIdRoute: typeof StoryNodeIdRoute
+  StoryIndexRoute: typeof StoryIndexRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
 }
 
@@ -57,6 +116,34 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/purse/return': {
+      id: '/purse/return'
+      path: '/purse/return'
+      fullPath: '/purse/return'
+      preLoaderRoute: typeof PurseReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/story/': {
+      id: '/story/'
+      path: '/story'
+      fullPath: '/story/'
+      preLoaderRoute: typeof StoryIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/story/$nodeId': {
+      id: '/story/$nodeId'
+      path: '/story/$nodeId'
+      fullPath: '/story/$nodeId'
+      preLoaderRoute: typeof StoryNodeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/payments/webhook': {
@@ -71,6 +158,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthRoute: AuthRoute,
+  PurseReturnRoute: PurseReturnRoute,
+  StoryNodeIdRoute: StoryNodeIdRoute,
+  StoryIndexRoute: StoryIndexRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
 }
 export const routeTree = rootRouteImport
