@@ -12,12 +12,6 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
-const AMOUNTS = [
-  { cents: 500, label: "$5", hint: "~30 sentences" },
-  { cents: 1000, label: "$10", hint: "~70 sentences" },
-  { cents: 2000, label: "$20", hint: "~150 sentences" },
-];
-
 export function TopUpDialog({
   open,
   onOpenChange,
@@ -25,13 +19,13 @@ export function TopUpDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [amount, setAmount] = useState(500);
+  const [priceId, setPriceId] = useState(PURSE_PACKS[0]!.priceId);
   const [checkingOut, setCheckingOut] = useState(false);
 
   const fetchClientSecret = async (): Promise<string> => {
     const result = await createTopUpCheckout({
       data: {
-        amountInCents: amount,
+        priceId,
         returnUrl: `${window.location.origin}/purse/return?session_id={CHECKOUT_SESSION_ID}`,
         environment: getStripeEnvironment(),
       },
@@ -40,6 +34,7 @@ export function TopUpDialog({
     if (!result.clientSecret) throw new Error("Checkout could not be opened");
     return result.clientSecret;
   };
+
 
   return (
     <Dialog
