@@ -10,13 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PURSE_PACKS } from "@/lib/purse-packs";
 import { cn } from "@/lib/utils";
-
-const AMOUNTS = [
-  { cents: 500, label: "$5", hint: "~30 sentences" },
-  { cents: 1000, label: "$10", hint: "~70 sentences" },
-  { cents: 2000, label: "$20", hint: "~150 sentences" },
-];
 
 export function TopUpDialog({
   open,
@@ -25,13 +20,13 @@ export function TopUpDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const [amount, setAmount] = useState(500);
+  const [priceId, setPriceId] = useState(PURSE_PACKS[0]!.priceId);
   const [checkingOut, setCheckingOut] = useState(false);
 
   const fetchClientSecret = async (): Promise<string> => {
     const result = await createTopUpCheckout({
       data: {
-        amountInCents: amount,
+        priceId,
         returnUrl: `${window.location.origin}/purse/return?session_id={CHECKOUT_SESSION_ID}`,
         environment: getStripeEnvironment(),
       },
@@ -40,6 +35,7 @@ export function TopUpDialog({
     if (!result.clientSecret) throw new Error("Checkout could not be opened");
     return result.clientSecret;
   };
+
 
   return (
     <Dialog
@@ -66,14 +62,15 @@ export function TopUpDialog({
         ) : (
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-2">
-              {AMOUNTS.map((option) => (
+              {PURSE_PACKS.map((option) => (
                 <button
-                  key={option.cents}
+                  key={option.priceId}
                   type="button"
-                  onClick={() => setAmount(option.cents)}
+                  onClick={() => setPriceId(option.priceId)}
                   className={cn(
                     "rounded-lg border p-3 text-center transition-colors",
-                    amount === option.cents
+                    priceId === option.priceId
+
                       ? "border-gilt bg-gilt/10"
                       : "border-border hover:border-gilt/50",
                   )}
