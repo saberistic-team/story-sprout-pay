@@ -10,6 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PURSE_PACKS } from "@/lib/purse-packs";
 import { cn } from "@/lib/utils";
 
 export function TopUpDialog({
@@ -61,14 +62,15 @@ export function TopUpDialog({
         ) : (
           <div className="space-y-4">
             <div className="grid grid-cols-3 gap-2">
-              {AMOUNTS.map((option) => (
+              {PURSE_PACKS.map((option) => (
                 <button
-                  key={option.cents}
+                  key={option.priceId}
                   type="button"
-                  onClick={() => setAmount(option.cents)}
+                  onClick={() => setPriceId(option.priceId)}
                   className={cn(
                     "rounded-lg border p-3 text-center transition-colors",
-                    amount === option.cents
+                    priceId === option.priceId
+
                       ? "border-gilt bg-gilt/10"
                       : "border-border hover:border-gilt/50",
                   )}
