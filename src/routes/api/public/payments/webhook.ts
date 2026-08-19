@@ -6,8 +6,10 @@ async function creditFromSession(session: Record<string, unknown>) {
   if (metadata["kind"] !== "wallet_topup" || !metadata["userId"]) return;
   if (session["payment_status"] === "unpaid") return;
 
-  const amount = Number(session["amount_total"] ?? 0) / 100;
+  const creditCents = Number(metadata["creditCents"] ?? 0);
+  const amount = (creditCents > 0 ? creditCents : Number(session["amount_subtotal"] ?? 0)) / 100;
   if (amount <= 0) return;
+
 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { error } = await supabaseAdmin.rpc("credit_wallet", {
