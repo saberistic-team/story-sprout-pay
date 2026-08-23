@@ -57,7 +57,7 @@ export const createTopUpCheckout = createServerFn({ method: "POST" })
         line_items: [{ price: stripePrice.id, quantity: 1 }],
         mode: "payment",
         ui_mode: "embedded_page",
-        return_url: data.returnUrl,
+        return_url: returnUrl,
         customer: customerId,
         payment_intent_data: { description: product.name },
         managed_payments: { enabled: true },
