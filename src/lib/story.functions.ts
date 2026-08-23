@@ -11,41 +11,76 @@ export const composeWithAI = createServerFn({ method: "POST" })
     if (data.roughText.length > 600) throw new Error("That's a bit long for one sentence");
     return data;
   })
-  .handler(async ({ data, context }): Promise<{ text: string } | { error: string }> => {
-    const { buildStorySoFar } = await import("@/lib/story-context.server");
-    const { composeSentence } = await import("@/lib/ai.server");
-    try {
-      const storySoFar = await buildStorySoFar(context.supabase, data.parentNodeId);
-      const text = await composeSentence({
-        mode: data.mode,
-        storySoFar,
-        roughText: data.roughText,
-      });
-      return { text };
-    } catch (error) {
-      return { error: error instanceof Error ? error.message : "The storyteller stumbled" };
-    }
-  });
+  .handler(
+    async ({
+      data,
+      context,
+    }): Promise<{ text: string; balance: number } | { error: string; code?: string }> => {
+      const { buildStorySoFar } = await import("@/lib/story-context.server");
+      const { composeSentence } = await import("@/lib/ai.server");
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+      try {
+        const storySoFar = await buildStorySoFar(context.supabase, data.parentNodeId);
+        const text = await composeSentence({
+          mode: data.mode,
+          storySoFar,
+          roughText: data.roughText,
+        });
+
+        const { data: balance, error } = await supabaseAdmin.rpc("charge_ai_assist", {
+          p_user_id: context.userId,
+          p_reference: `ai:${crypto.randomUUID()}`,
+          p_memo: data.mode === "polish" ? "Polished a sentence with AI" : "Wrote a sentence with AI",
+        });
+
+        if (error) {
+          if (error.message.includes("INSUFFICIENT_BALANCE")) {
+            return { error: "Your story purse is empty", code: "insufficient_balance" };
+          }
+          console.error("charge_ai_assist failed", error);
+          return { error: "The storyteller could not be paid. Try again." };
+        }
+
+        return { text, balance: Number(balance ?? 0) };
+      } catch (error) {
+        return { error: error instanceof Error ? error.message : "The storyteller stumbled" };
+      }
+    },
+  );
 
 export const getContributionContext = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { parentNodeId: string }) => data)
-  .handler(async ({ data, context }): Promise<{ price: number; balance: number }> => {
-    const { data: node, error } = await context.supabase
-      .from("story_nodes")
-      .select("current_fork_price")
-      .eq("id", data.parentNodeId)
-      .maybeSingle();
-    if (error || !node) throw new Error("That part of the story could not be found");
+  .handler(
+    async ({ data, context }): Promise<{ price: number; balance: number; aiPrice: number }> => {
+      const { data: node, error } = await context.supabase
+        .from("story_nodes")
+        .select("current_fork_price")
+        .eq("id", data.parentNodeId)
+        .maybeSingle();
+      if (error || !node) throw new Error("That part of the story could not be found");
 
-    const { data: wallet } = await context.supabase
-      .from("wallets")
-      .select("balance")
-      .eq("user_id", context.userId)
-      .maybeSingle();
+      const { data: wallet } = await context.supabase
+        .from("wallets")
+        .select("balance")
+        .eq("user_id", context.userId)
+        .maybeSingle();
 
-    return { price: Number(node.current_fork_price), balance: Number(wallet?.balance ?? 0) };
-  });
+      const { data: config } = await context.supabase
+        .from("platform_config")
+        .select("value")
+        .eq("key", "ai_assist_price")
+        .maybeSingle();
+
+      return {
+        price: Number(node.current_fork_price),
+        balance: Number(wallet?.balance ?? 0),
+        aiPrice: Number(config?.value ?? 0.05),
+      };
+    },
+  );
+
 
 export const publishContribution = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
