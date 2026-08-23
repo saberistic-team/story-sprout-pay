@@ -4,7 +4,7 @@ export type StoryNode = {
   id: string;
   story_id: string;
   parent_node_id: string | null;
-  author_id: string | null;
+  
   author_name: string;
   content: string;
   ai_generated: boolean;
