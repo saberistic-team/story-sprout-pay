@@ -74,7 +74,7 @@ export function ForkCard({ node, voted }: { node: StoryNode; voted: boolean }) {
 
         <span className="inline-flex items-center gap-1">
           <GitBranch className="h-3.5 w-3.5" aria-hidden />
-          {node.descendant_count} {node.descendant_count === 1 ? "branch" : "branches"}
+          {node.descendant_count} {node.descendant_count === 1 ? "sentence" : "sentences"} below
         </span>
 
         {(node.ai_generated || node.ai_polished) && (
