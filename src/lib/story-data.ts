@@ -4,7 +4,7 @@ export type StoryNode = {
   id: string;
   story_id: string;
   parent_node_id: string | null;
-  author_id: string | null;
+  
   author_name: string;
   content: string;
   ai_generated: boolean;
@@ -47,7 +47,9 @@ export async function fetchStory(): Promise<StoryData> {
 
   const { data: nodes, error: nodesError } = await supabase
     .from("story_nodes")
-    .select("*")
+    .select(
+      "id, story_id, parent_node_id, author_name, content, ai_generated, ai_polished, original_price_paid, current_fork_price, upvote_count, descendant_count, downstream_revenue, depth, created_at",
+    )
     .eq("story_id", story.id)
     .order("created_at", { ascending: true });
 
