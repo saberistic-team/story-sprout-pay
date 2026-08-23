@@ -138,7 +138,8 @@ function ProfilePage() {
                 <p className="font-display text-lg leading-snug">{node.content as string}</p>
                 <p className="mt-2 text-xs text-muted-foreground">
                   {node.upvote_count as number} applause · {node.descendant_count as number}{" "}
-                  branches · now {formatPrice(node.current_fork_price as number)} to continue
+                  sentences below · now {formatPrice(node.current_fork_price as number)} to continue
+
                 </p>
               </Link>
             ))}
