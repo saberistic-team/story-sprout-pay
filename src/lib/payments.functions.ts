@@ -1,6 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
+import { getRequest } from "@tanstack/react-start/server";
 import type Stripe from "stripe";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+
+/** Only allow returning to this app's own origin. */
+function safeReturnUrl(rawReturnUrl: string): string {
+  const request = getRequest();
+  const origin = new URL(request.url).origin;
+  let target: URL;
+  try {
+    target = new URL(rawReturnUrl, origin);
+  } catch {
+    throw new Error("Invalid return URL");
+  }
+  if (target.origin !== origin) throw new Error("Invalid return URL");
+  return rawReturnUrl.startsWith("/") ? origin + rawReturnUrl : rawReturnUrl;
+}
 
 export const createTopUpCheckout = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -15,6 +30,10 @@ export const createTopUpCheckout = createServerFn({ method: "POST" })
     try {
       const pack = findPursePack(data.priceId);
       if (!pack) throw new Error("Unknown purse pack");
+
+      const returnUrl = safeReturnUrl(data.returnUrl);
+
+
 
       const stripe = createStripeClient(data.environment);
       const {
@@ -38,7 +57,7 @@ export const createTopUpCheckout = createServerFn({ method: "POST" })
         line_items: [{ price: stripePrice.id, quantity: 1 }],
         mode: "payment",
         ui_mode: "embedded_page",
-        return_url: data.returnUrl,
+        return_url: returnUrl,
         customer: customerId,
         payment_intent_data: { description: product.name },
         managed_payments: { enabled: true },
