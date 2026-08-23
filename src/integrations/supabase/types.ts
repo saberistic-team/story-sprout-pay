@@ -434,6 +434,23 @@ export type Database = {
         }
         Returns: string
       }
+      royalty_weights: {
+        Args: {
+          p_lambda: number
+          p_max: number
+          p_parent_node_id: string
+          p_user_id: string
+        }
+        Returns: {
+          aw: number
+          distance: number
+          ew: number
+          node_id: string
+          pw: number
+          recipient: string
+          rw: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
