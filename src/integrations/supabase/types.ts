@@ -408,6 +408,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      charge_ai_assist: {
+        Args: { p_memo: string; p_reference: string; p_user_id: string }
+        Returns: number
+      }
       config_value: {
         Args: { p_default: number; p_key: string }
         Returns: number
