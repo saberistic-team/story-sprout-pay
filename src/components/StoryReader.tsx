@@ -145,7 +145,10 @@ export function StoryReader({ nodeId }: { nodeId?: string }) {
           <div className="min-w-0 flex-1 text-xs text-muted-foreground">
             <span className="block truncate">Add the next sentence here</span>
             <span className="text-foreground">
-              {formatPrice(focus.current_fork_price)} · {focus.descendant_count} branches downstream
+              {formatPrice(focus.current_fork_price)} · {forks.length}{" "}
+              {forks.length === 1 ? "continuation" : "continuations"} · {focus.descendant_count}{" "}
+              {focus.descendant_count === 1 ? "sentence" : "sentences"} downstream
+
             </span>
           </div>
           <Button onClick={() => setWriting(true)}>

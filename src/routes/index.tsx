@@ -76,7 +76,8 @@ function Landing() {
                   <p className="font-display text-lg leading-snug">{fork.content}</p>
                   <p className="mt-2 text-xs text-muted-foreground">
                     {fork.author_name} · {fork.upvote_count} applause · {fork.descendant_count}{" "}
-                    branches · {formatPrice(fork.current_fork_price)} to continue
+                    sentences below · {formatPrice(fork.current_fork_price)} to continue
+
                   </p>
                 </Link>
               ))}
