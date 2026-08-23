@@ -87,8 +87,16 @@ export function StoryReader({ nodeId }: { nodeId?: string }) {
         </span>
       </div>
 
+      <h1 className="font-display text-2xl leading-tight font-semibold text-balance sm:text-3xl">
+        {story.data?.story.title}
+      </h1>
+      <p className="mt-1 mb-6 text-sm text-muted-foreground">
+        {parentId
+          ? `Branch by ${focus.author_name} · ${path.length} sentences so far`
+          : "The opening of the story"}
+      </p>
+
       <article className="story-prose">
-        <h1 className="sr-only">{story.data?.story.title}</h1>
         {path.map((node, index) => (
           <span key={node.id} className="group">
             {index > 0 && " "}
@@ -101,6 +109,7 @@ export function StoryReader({ nodeId }: { nodeId?: string }) {
           </span>
         ))}
       </article>
+
 
       <section className="mt-10">
         <div className="flex flex-wrap items-center justify-between gap-3">

@@ -115,3 +115,27 @@ export function formatEarnings(value: number | string): string {
   if (amount > 0 && amount < 0.01) return "<$0.01";
   return `$${amount.toFixed(2)}`;
 }
+
+export type NodeSummary = {
+  id: string;
+  content: string;
+  author_name: string;
+  parent_node_id: string | null;
+  depth: number;
+};
+
+/** Lightweight public read used for per-branch page metadata. */
+export async function fetchNodeSummary(nodeId: string): Promise<NodeSummary | null> {
+  const { data, error } = await supabase
+    .from("story_nodes")
+    .select("id, content, author_name, parent_node_id, depth")
+    .eq("id", nodeId)
+    .maybeSingle();
+  if (error) return null;
+  return (data as NodeSummary | null) ?? null;
+}
+
+export function truncate(text: string, max: number): string {
+  const clean = text.trim().replace(/\s+/g, " ");
+  return clean.length <= max ? clean : `${clean.slice(0, max - 1).trimEnd()}…`;
+}

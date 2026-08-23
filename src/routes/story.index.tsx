@@ -17,8 +17,12 @@ export const Route = createFileRoute("/story/")({
         property: "og:description",
         content: "A branching fairy tale written one sentence at a time by everyone.",
       },
+      { property: "og:type", content: "article" },
+      { property: "og:url", content: "https://story-sprout-pay.lovable.app/story" },
     ],
+    links: [{ rel: "canonical", href: "https://story-sprout-pay.lovable.app/story" }],
   }),
+
   component: StoryIndex,
 });
 
