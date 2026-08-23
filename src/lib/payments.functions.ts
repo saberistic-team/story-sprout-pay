@@ -14,7 +14,7 @@ function safeReturnUrl(rawReturnUrl: string): string {
     throw new Error("Invalid return URL");
   }
   if (target.origin !== origin) throw new Error("Invalid return URL");
-  return target.toString();
+  return rawReturnUrl.startsWith("/") ? origin + rawReturnUrl : rawReturnUrl;
 }
 
 export const createTopUpCheckout = createServerFn({ method: "POST" })
