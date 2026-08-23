@@ -21,8 +21,12 @@ export const Route = createFileRoute("/")({
         content:
           "Read free, add a sentence for cents, and earn royalties when the branch you started grows.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://story-sprout-pay.lovable.app/" },
     ],
+    links: [{ rel: "canonical", href: "https://story-sprout-pay.lovable.app/" }],
   }),
+
   component: Landing,
 });
 

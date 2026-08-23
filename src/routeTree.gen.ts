@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PurseReturnRouteImport } from './routes/purse.return'
 import { Route as StoryIndexRouteImport } from './routes/story.index'
 import { Route as StoryNodeIdRouteImport } from './routes/story.$nodeId'
@@ -30,6 +31,11 @@ const AuthRoute = AuthRouteImport.update({
 const ProfileRoute = ProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PurseReturnRoute = PurseReturnRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/purse/return': typeof PurseReturnRoute
   '/story/$nodeId': typeof StoryNodeIdRoute
   '/story/': typeof StoryIndexRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/purse/return': typeof PurseReturnRoute
   '/story/$nodeId': typeof StoryNodeIdRoute
   '/story': typeof StoryIndexRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/profile': typeof ProfileRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/purse/return': typeof PurseReturnRoute
   '/story/$nodeId': typeof StoryNodeIdRoute
   '/story/': typeof StoryIndexRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/profile'
+    | '/sitemap.xml'
     | '/purse/return'
     | '/story/$nodeId'
     | '/story/'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/profile'
+    | '/sitemap.xml'
     | '/purse/return'
     | '/story/$nodeId'
     | '/story'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/profile'
+    | '/sitemap.xml'
     | '/purse/return'
     | '/story/$nodeId'
     | '/story/'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRoute
   ProfileRoute: typeof ProfileRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   PurseReturnRoute: typeof PurseReturnRoute
   StoryNodeIdRoute: typeof StoryNodeIdRoute
   StoryIndexRoute: typeof StoryIndexRoute
@@ -143,6 +156,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/purse/return': {
@@ -180,6 +200,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRoute,
   ProfileRoute: ProfileRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   PurseReturnRoute: PurseReturnRoute,
   StoryNodeIdRoute: StoryNodeIdRoute,
   StoryIndexRoute: StoryIndexRoute,
