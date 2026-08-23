@@ -57,15 +57,23 @@ export function ContributeDialog({
   const ai = useMutation({
     mutationFn: async (mode: "polish" | "write") => {
       const result = await composeWithAI({ data: { mode, parentNodeId, roughText: text } });
-      if ("error" in result) throw new Error(result.error);
+      if ("error" in result) throw Object.assign(new Error(result.error), { code: result.code });
       return { mode, text: result.text };
     },
     onSuccess: ({ mode, text: next }) => {
       setText(next);
       if (mode === "polish") setAiPolished(true);
       else setAiGenerated(true);
+      void context.refetch();
+      void queryClient.invalidateQueries({ queryKey: ["wallet"] });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error & { code?: string }) => {
+      if (error.code === "insufficient_balance") {
+        setTopUpOpen(true);
+        return;
+      }
+      toast.error(error.message);
+    },
   });
 
   const publish = useMutation({
@@ -96,7 +104,10 @@ export function ContributeDialog({
 
   const price = context.data?.price ?? 0;
   const balance = context.data?.balance ?? 0;
+  const aiPrice = context.data?.aiPrice ?? 0.05;
   const canAfford = balance >= price;
+  const canAffordAI = balance >= aiPrice;
+
 
   if (!user) {
     return (
