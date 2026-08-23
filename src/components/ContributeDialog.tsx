@@ -57,15 +57,23 @@ export function ContributeDialog({
   const ai = useMutation({
     mutationFn: async (mode: "polish" | "write") => {
       const result = await composeWithAI({ data: { mode, parentNodeId, roughText: text } });
-      if ("error" in result) throw new Error(result.error);
+      if ("error" in result) throw Object.assign(new Error(result.error), { code: result.code });
       return { mode, text: result.text };
     },
     onSuccess: ({ mode, text: next }) => {
       setText(next);
       if (mode === "polish") setAiPolished(true);
       else setAiGenerated(true);
+      void context.refetch();
+      void queryClient.invalidateQueries({ queryKey: ["wallet"] });
     },
-    onError: (error: Error) => toast.error(error.message),
+    onError: (error: Error & { code?: string }) => {
+      if (error.code === "insufficient_balance") {
+        setTopUpOpen(true);
+        return;
+      }
+      toast.error(error.message);
+    },
   });
 
   const publish = useMutation({
@@ -96,7 +104,10 @@ export function ContributeDialog({
 
   const price = context.data?.price ?? 0;
   const balance = context.data?.balance ?? 0;
+  const aiPrice = context.data?.aiPrice ?? 0.05;
   const canAfford = balance >= price;
+  const canAffordAI = balance >= aiPrice;
+
 
   if (!user) {
     return (
@@ -144,7 +155,7 @@ export function ContributeDialog({
               type="button"
               variant="outline"
               size="sm"
-              disabled={ai.isPending || text.trim().length < 3}
+              disabled={ai.isPending || text.trim().length < 3 || !canAffordAI}
               onClick={() => ai.mutate("polish")}
             >
               {ai.isPending ? (
@@ -152,22 +163,27 @@ export function ContributeDialog({
               ) : (
                 <Wand2 className="h-4 w-4" aria-hidden />
               )}
-              Polish with AI
+              Polish with AI · {formatPrice(aiPrice)}
             </Button>
             <Button
               type="button"
               variant="outline"
               size="sm"
-              disabled={ai.isPending}
+              disabled={ai.isPending || !canAffordAI}
               onClick={() => ai.mutate("write")}
             >
               <Sparkles className="h-4 w-4" aria-hidden />
-              Write with AI
+              Write with AI · {formatPrice(aiPrice)}
             </Button>
             <span className="ml-auto self-center text-xs text-muted-foreground">
               {text.length}/400
             </span>
           </div>
+          {!canAffordAI && (
+            <p className="-mt-1 text-xs text-destructive">
+              Fill your purse to use the AI storyteller ({formatPrice(aiPrice)} per use).
+            </p>
+          )}
 
           <dl className="rounded-lg border border-border bg-secondary/50 p-3 text-sm">
             <div className="flex items-center justify-between">
@@ -175,9 +191,14 @@ export function ContributeDialog({
               <dd className="font-semibold">{formatPrice(price)}</dd>
             </div>
             <div className="mt-1 flex items-center justify-between">
+              <dt className="text-muted-foreground">AI help, each time</dt>
+              <dd>{formatPrice(aiPrice)}</dd>
+            </div>
+            <div className="mt-1 flex items-center justify-between">
               <dt className="text-muted-foreground">Your purse</dt>
               <dd className={canAfford ? "" : "text-destructive"}>{formatPrice(balance)}</dd>
             </div>
+
             <p className="mt-2 text-xs text-muted-foreground">
               30% of this goes to the five writers above you, weighted by closeness, applause and
               how much their branch has grown.
